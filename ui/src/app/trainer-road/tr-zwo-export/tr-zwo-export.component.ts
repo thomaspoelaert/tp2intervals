@@ -77,6 +77,16 @@ export class TrZwoExportComponent implements OnDestroy {
 
   toggleWorkout(id: string, checked: boolean) { checked ? this.selectedWorkouts.add(id) : this.selectedWorkouts.delete(id); }
 
+  scanErrorMessage(code: string | null | undefined) {
+    const messages: Record<string, string> = {
+      auth_expired: 'TrainerRoad login verlopen. Vernieuw de TrainerRoad-cookie in Config en probeer opnieuw.',
+      rate_limited: 'TrainerRoad beperkt tijdelijk de aanvragen. Wacht even en probeer opnieuw.',
+      trainerroad_response_invalid: 'TrainerRoad gaf een onverwacht antwoord. Bekijk het logbestand voor details.',
+      network_or_internal_error: 'TrainerRoad kon niet worden bereikt of de scan liep intern fout.'
+    };
+    return messages[code ?? ''] ?? `TrainerRoad scan mislukt (${code ?? 'onbekende fout'}).`;
+  }
+
   selectAllMatching() { this.matchingWorkouts().forEach(item => this.selectedWorkouts.add(item.id)); }
 
   startExport() {

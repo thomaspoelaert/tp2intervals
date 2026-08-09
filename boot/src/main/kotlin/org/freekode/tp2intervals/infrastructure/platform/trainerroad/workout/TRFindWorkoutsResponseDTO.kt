@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
 
 class TRFindWorkoutsResponseDTO(
-    @JsonProperty("Workouts")
-    val workouts: List<TrainerRoadWorkoutDetailsDTO>,
+    @JsonProperty("workouts")
+    @JsonAlias("Workouts")
+    val workouts: List<TrainerRoadWorkoutDetailsDTO> = emptyList(),
     @JsonProperty("predicate")
     @JsonAlias("Predicate")
     val predicate: PredicateDTO? = null,

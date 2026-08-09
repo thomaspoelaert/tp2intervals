@@ -12,7 +12,7 @@ class TrainerRoadWorkoutDetailsDTO(
     val workoutName: String,
     @JsonProperty("WorkoutDescription")
     @JsonAlias("workoutDescription")
-    val workoutDescription: String = "",
+    val workoutDescription: String? = null,
     @JsonProperty("IsOutside")
     @JsonAlias("isOutside")
     val isOutside: Boolean = false,
@@ -42,5 +42,5 @@ class TrainerRoadWorkoutDetailsDTO(
     val workoutLabelId: Int? = null,
     @JsonProperty("Tags")
     @JsonAlias("tags")
-    val tags: List<Any> = emptyList(),
+    val tags: List<Any>? = null,
 )

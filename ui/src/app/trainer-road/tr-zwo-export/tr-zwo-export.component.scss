@@ -3,3 +3,4 @@
 .delay { width: 150px; }
 .categories, .workouts { display: flex; flex-direction: column; max-height: 260px; overflow: auto; gap: 4px; }
 .filters mat-form-field { width: 170px; }
+.scan-error { color: #b3261e; font-weight: 500; }

@@ -8,6 +8,7 @@
 
   <ng-container *ngIf="scan">
     <p>Found {{ scan.totalWorkouts }} workouts ({{ scan.completedRequests }} index requests), status: {{ scan.status }}</p>
+    <p class="scan-error" *ngIf="scan.status === 'failed'">{{ scanErrorMessage(scan.errorCode) }}</p>
     <div class="categories"><mat-checkbox *ngFor="let category of scan.categories" [checked]="selectedCategories.has(category.id)" (change)="toggleCategory(category.id, $event.checked)">{{ category.name }} ({{ category.count }})</mat-checkbox></div>
     <div class="filters">
       <mat-form-field appearance="outline"><mat-label>Minimum duration (min)</mat-label><input matInput type="number" [(ngModel)]="minDuration"></mat-form-field>

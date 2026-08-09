@@ -2,11 +2,13 @@ package org.freekode.tp2intervals.app.trainerroadexport
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.FeignException
+import feign.codec.DecodeException
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.TrainerRoadApiClient
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.TRFindWorkoutsRequestDTO
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TRWorkoutProfileZoneDTO
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TRWorkoutResponseDTO
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TrainerRoadZwoConverter
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.Resource
@@ -28,6 +30,7 @@ class TrainerRoadZwoExportService(
     private val converter: TrainerRoadZwoConverter,
     @Value("\${app.trainer-road.export-root:\${user.home}/.tp2intervals/trainerroad-zwo-export}") root: String,
 ) {
+    private val log = LoggerFactory.getLogger(javaClass)
     private val executor = Executors.newSingleThreadExecutor { task -> Thread(task, "trainerroad-zwo-export").apply { isDaemon = true } }
     private val rootPath = Path.of(root)
     private val scans = ConcurrentHashMap<String, ScanState>()
@@ -85,6 +88,7 @@ class TrainerRoadZwoExportService(
             var total: Int? = null
             do {
                 if (state.cancelled) return state.finish("cancelled")
+                state.requestCount++
                 val response = api.findWorkouts(TRFindWorkoutsRequestDTO("", page, 100, false, "workoutName", libraryPredicate()))
                 state.completedRequests++
                 val rows = response.workouts.mapNotNull { toSummary(it, state.catalog) }
@@ -98,10 +102,10 @@ class TrainerRoadZwoExportService(
                 pause(state.delaySeconds)
             } while (true)
             state.workouts = all.distinctBy { it.id }
-            state.requestCount = state.completedRequests
             state.finish("completed")
         } catch (e: Throwable) {
             state.errorCode = errorCode(e)
+            log.error("TrainerRoad library scan {} failed with {}", state.id, state.errorCode, e)
             state.finish("failed")
         }
     }
@@ -151,6 +155,7 @@ class TrainerRoadZwoExportService(
             state.finish("completed")
         } catch (e: Throwable) {
             state.errorCode = errorCode(e)
+            log.error("TrainerRoad ZWO export {} failed with {}", state.id, state.errorCode, e)
             state.finish(if (state.cancelled) "cancelled" else "failed")
         }
     }
@@ -159,7 +164,7 @@ class TrainerRoadZwoExportService(
         if (row.id.isBlank()) return null
         val categoryId = row.progressionId?.toString() ?: "uncategorized"
         val category = catalog.firstOrNull { it.id?.toString() == categoryId }?.name ?: "Uncategorized"
-        return ExportWorkoutSummary(row.id, row.workoutName, categoryId, category, converter.categoryCode(category), row.profileId, row.profileName, row.duration, row.progressionLevel, row.intensityFactor?.let { if (it > 2) it / 100 else it }, row.tss, row.tags.map { it.toString() })
+        return ExportWorkoutSummary(row.id, row.workoutName, categoryId, category, converter.categoryCode(category), row.profileId, row.profileName, row.duration, row.progressionLevel, row.intensityFactor?.let { if (it > 2) it / 100 else it }, row.tss, row.tags.orEmpty().map { it.toString() })
     }
 
     private fun libraryPredicate() = mapOf("profileIds" to emptyList<Int>(), "progressionIds" to emptyList<Int>(), "progressionLevels" to emptyList<Double>())
@@ -192,8 +197,9 @@ class TrainerRoadZwoExportService(
     private fun pause(seconds: Long) { if (seconds > 0) TimeUnit.SECONDS.sleep(seconds.coerceAtMost(300)) }
     private fun clampDelay(value: Long) = value.coerceIn(0, 300)
     private fun errorCode(error: Throwable): String = when (error) {
+        is DecodeException -> "trainerroad_response_invalid"
         is FeignException -> when (error.status()) { 401, 403 -> "auth_expired"; 429 -> "rate_limited"; else -> "trainerroad_http_${error.status()}" }
-        else -> "network_or_internal_error"
+        else -> if (error.cause is com.fasterxml.jackson.core.JacksonException) "trainerroad_response_invalid" else "network_or_internal_error"
     }
 
     private data class ManifestFile(val runId: String, val updatedAt: String, val workouts: List<ManifestEntry>)

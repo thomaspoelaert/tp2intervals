@@ -40,7 +40,7 @@ class TrainerRoadZwoConverter {
         xml.writeStartElement("workout_file")
         element(xml, "author", "TrainerRoad via tp2intervals")
         element(xml, "name", displayName)
-        element(xml, "description", details.workoutDescription.replace(Regex("<[^>]*>"), " ").trim())
+        element(xml, "description", details.workoutDescription.orEmpty().replace(Regex("<[^>]*>"), " ").trim())
         element(xml, "sportType", "bike")
         xml.writeEmptyElement("tags")
         xml.writeStartElement("workout")

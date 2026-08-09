@@ -23,7 +23,7 @@ class TrainerRoadWorkoutMapper {
         return WorkoutDetails(
             if (detailsDTO.isOutside) TrainingType.BIKE else TrainingType.VIRTUAL_BIKE,
             detailsDTO.workoutName,
-            getDescription(detailsDTO.workoutDescription, removeHtmlTags),
+            getDescription(detailsDTO.workoutDescription.orEmpty(), removeHtmlTags),
             Duration.ofMinutes(detailsDTO.duration.toLong()),
             detailsDTO.tss,
             ExternalData.empty().withTrainerRoad(detailsDTO.id)

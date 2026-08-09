@@ -1,0 +1,5 @@
+.export-tool { display: flex; flex-direction: column; gap: 12px; }
+.toolbar, .filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.delay { width: 150px; }
+.categories, .workouts { display: flex; flex-direction: column; max-height: 260px; overflow: auto; gap: 4px; }
+.filters mat-form-field { width: 170px; }

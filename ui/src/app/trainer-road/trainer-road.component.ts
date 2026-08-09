@@ -14,6 +14,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {
   TrCopyCalendarToCalendarComponent
 } from "app/trainer-road/tr-copy-calendar-to-calendar/tr-copy-calendar-to-calendar.component";
+import {TrZwoExportComponent} from "app/trainer-road/tr-zwo-export/tr-zwo-export.component";
 
 @Component({
   selector: 'app-trainer-road',
@@ -24,7 +25,8 @@ import {
     MatProgressBarModule,
     TrCopyLibraryToLibraryComponent,
     TrCopyCalendarToLibraryComponent,
-    TrCopyCalendarToCalendarComponent
+    TrCopyCalendarToCalendarComponent,
+    TrZwoExportComponent
   ],
   templateUrl: './trainer-road.component.html',
   styleUrl: './trainer-road.component.scss'

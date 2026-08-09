@@ -29,6 +29,7 @@ export class PackagedBootProcess extends ActuatorProcess {
     const env = {
       SPRING_DATASOURCE_URL: `jdbc:sqlite:${this.bootDbPath}`,
       SPRING_PROFILES_ACTIVE: `electron`,
+      APP_TRAINER_ROAD_EXPORT_ROOT: path.join(app.getPath('userData'), 'trainerroad-zwo-export'),
     };
 
     log.info('Running boot from jar...');

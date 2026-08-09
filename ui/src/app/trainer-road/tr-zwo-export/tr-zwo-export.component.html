@@ -1,0 +1,29 @@
+<div class="export-tool">
+  <p>Scan TrainerRoad, selecteer workouts en exporteer geldige ZWO-bestanden per category.</p>
+  <div class="toolbar">
+    <button mat-flat-button color="primary" (click)="startScan()" [disabled]="busy">Scan Library</button>
+    <mat-form-field appearance="outline" class="delay"><mat-label>Request delay (sec)</mat-label><input matInput type="number" min="0" max="300" [(ngModel)]="requestDelaySeconds"></mat-form-field>
+  </div>
+  <mat-progress-bar *ngIf="busy" mode="indeterminate"></mat-progress-bar>
+
+  <ng-container *ngIf="scan">
+    <p>Found {{ scan.totalWorkouts }} workouts ({{ scan.completedRequests }} index requests), status: {{ scan.status }}</p>
+    <div class="categories"><mat-checkbox *ngFor="let category of scan.categories" [checked]="selectedCategories.has(category.id)" (change)="toggleCategory(category.id, $event.checked)">{{ category.name }} ({{ category.count }})</mat-checkbox></div>
+    <div class="filters">
+      <mat-form-field appearance="outline"><mat-label>Minimum duration (min)</mat-label><input matInput type="number" [(ngModel)]="minDuration"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Maximum duration (min)</mat-label><input matInput type="number" [(ngModel)]="maxDuration"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Minimum Workout Level</mat-label><input matInput type="number" step="0.1" [(ngModel)]="minWorkoutLevel"></mat-form-field>
+      <mat-form-field appearance="outline"><mat-label>Maximum Workout Level</mat-label><input matInput type="number" step="0.1" [(ngModel)]="maxWorkoutLevel"></mat-form-field>
+    </div>
+    <p>Matching workouts: {{ matchingWorkouts().length }} <button mat-button (click)="selectAllMatching()">Select all matching</button></p>
+    <div class="workouts"><mat-checkbox *ngFor="let workout of matchingWorkouts()" [checked]="selectedWorkouts.has(workout.id)" (change)="toggleWorkout(workout.id, $event.checked)">{{ workout.name }} — {{ workout.category }} — {{ workout.durationMinutes }}m — WL {{ workout.workoutLevel ?? 'NA' }}</mat-checkbox></div>
+    <button mat-flat-button color="primary" (click)="startExport()" [disabled]="busy || selectedWorkouts.size === 0">Start Export ({{ selectedWorkouts.size }})</button>
+  </ng-container>
+
+  <ng-container *ngIf="job">
+    <p>{{ job.processed }} / {{ job.total }} — exported {{ job.exported }}, skipped {{ job.skipped }}, failed {{ job.failed }}, unsupported {{ job.unsupported }}</p>
+    <p *ngIf="job.currentWorkout">Current: {{ job.currentWorkout }}</p>
+    <button mat-button *ngIf="busy" (click)="cancelExport()">Cancel</button>
+    <button mat-flat-button color="primary" *ngIf="job.downloadReady" (click)="download()">Download ZIP</button>
+  </ng-container>
+</div>

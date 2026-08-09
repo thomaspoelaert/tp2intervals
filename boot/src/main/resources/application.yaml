@@ -14,7 +14,7 @@ spring:
       client:
         config:
           default:
-            loggerLevel: full
+            loggerLevel: basic
   jackson:
     default-property-inclusion: non_null
     serialization:

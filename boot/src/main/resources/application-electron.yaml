@@ -1,5 +1,6 @@
 server:
   port: 44864
+  address: 127.0.0.1
 
 spring:
   main:

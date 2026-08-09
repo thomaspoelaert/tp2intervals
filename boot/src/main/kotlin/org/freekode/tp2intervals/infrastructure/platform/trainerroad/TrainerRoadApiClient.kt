@@ -39,10 +39,19 @@ interface TrainerRoadApiClient {
         @RequestHeader("ids") ids: String,
     ): List<TrainerRoadActivityDTO>
 
-    @GetMapping("/app/api/workouts")
+    @PostMapping(
+        value = ["/app/api/workouts"],
+        headers = ["trainerroad-jsonformat=camel-case", "tr-cache-control=no-cache"]
+    )
     fun findWorkouts(
         @RequestBody requestDTO: TRFindWorkoutsRequestDTO,
     ): TRFindWorkoutsResponseDTO
+
+    @GetMapping(
+        value = ["/app/api/workouts/workout-profiles-by-zone"],
+        headers = ["trainerroad-jsonformat=camel-case", "tr-cache-control=use-cache"]
+    )
+    fun getWorkoutProfilesByZone(): List<workout.TRWorkoutProfileZoneDTO>
 
     @GetMapping("/app/api/workoutdetails/{workoutId}")
     fun getWorkout(

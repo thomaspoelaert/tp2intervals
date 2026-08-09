@@ -31,6 +31,7 @@ jobs:
       jar-artifact-name: tp2intervals-jar
 
   docker-image-new:
+    if: github.ref_name == 'main' || github.ref_name == 'dev'
     needs:
       - jar
     uses: ./.github/workflows/workflow-docker-image-new.yml

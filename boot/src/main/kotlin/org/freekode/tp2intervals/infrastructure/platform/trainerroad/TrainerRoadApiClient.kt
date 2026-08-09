@@ -3,6 +3,7 @@ package org.freekode.tp2intervals.infrastructure.platform.trainerroad
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.activity.TrainerRoadActivityDTO
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TRFindWorkoutsResponseDTO
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TRWorkoutResponseDTO
+import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TRWorkoutProfileZoneDTO
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.core.io.Resource
 import org.springframework.web.bind.annotation.GetMapping
@@ -51,7 +52,7 @@ interface TrainerRoadApiClient {
         value = ["/app/api/workouts/workout-profiles-by-zone"],
         headers = ["trainerroad-jsonformat=camel-case", "tr-cache-control=use-cache"]
     )
-    fun getWorkoutProfilesByZone(): List<workout.TRWorkoutProfileZoneDTO>
+    fun getWorkoutProfilesByZone(): List<TRWorkoutProfileZoneDTO>
 
     @GetMapping("/app/api/workoutdetails/{workoutId}")
     fun getWorkout(

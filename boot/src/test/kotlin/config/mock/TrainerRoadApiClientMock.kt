@@ -8,6 +8,7 @@ import org.freekode.tp2intervals.infrastructure.platform.trainerroad.TrainerRoad
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.activity.TrainerRoadActivityDTO
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TRFindWorkoutsResponseDTO
 import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TRWorkoutResponseDTO
+import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TRWorkoutProfileZoneDTO
 import org.springframework.core.io.Resource
 
 class TrainerRoadApiClientMock(
@@ -37,6 +38,8 @@ class TrainerRoadApiClientMock(
     override fun findWorkouts(requestDTO: TRFindWorkoutsRequestDTO): TRFindWorkoutsResponseDTO {
         TODO("Not yet implemented")
     }
+
+    override fun getWorkoutProfilesByZone(): List<TRWorkoutProfileZoneDTO> = emptyList()
 
     override fun getWorkout(workoutId: String): TRWorkoutResponseDTO {
         return when (workoutId) {

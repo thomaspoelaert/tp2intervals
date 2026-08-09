@@ -93,7 +93,8 @@ class TrainerRoadZwoExportService(
                 page++
                 state.totalWorkouts = total ?: all.size
                 state.workouts = all.toList()
-                if (rows.isEmpty() || (total != null && all.size >= total!!)) break
+                val knownTotal = total
+                if (rows.isEmpty() || (knownTotal != null && all.size >= knownTotal)) break
                 pause(state.delaySeconds)
             } while (true)
             state.workouts = all.distinctBy { it.id }
@@ -130,15 +131,15 @@ class TrainerRoadZwoExportService(
                     Files.createDirectories(categoryDir)
                     val output = categoryDir.resolve(uniqueName(categoryDir, converted.fileName, summary.id))
                     Files.writeString(output, converted.xml)
-                    generated += output
+                    generated.add(output)
                     state.exported++
-                    state.manifest += ManifestEntry(summary.id, summary.name, summary.category, summary.workoutLevel, summary.durationMinutes, "exported", output.toString(), Instant.now().toString(), converted.warnings)
+                    state.manifest.add(ManifestEntry(summary.id, summary.name, summary.category, summary.workoutLevel, summary.durationMinutes, "exported", output.toString(), Instant.now().toString(), converted.warnings))
                 } catch (e: IllegalArgumentException) {
                     state.unsupported++
-                    state.manifest += ManifestEntry(summary.id, summary.name, summary.category, summary.workoutLevel, summary.durationMinutes, "unsupported", null, Instant.now().toString(), listOf(e.message ?: "unsupported"))
+                    state.manifest.add(ManifestEntry(summary.id, summary.name, summary.category, summary.workoutLevel, summary.durationMinutes, "unsupported", null, Instant.now().toString(), listOf(e.message ?: "unsupported")))
                 } catch (e: Throwable) {
                     state.failed++
-                    state.manifest += ManifestEntry(summary.id, summary.name, summary.category, summary.workoutLevel, summary.durationMinutes, "failed", null, Instant.now().toString(), listOf(errorCode(e)))
+                    state.manifest.add(ManifestEntry(summary.id, summary.name, summary.category, summary.workoutLevel, summary.durationMinutes, "failed", null, Instant.now().toString(), listOf(errorCode(e))))
                     if (e is FeignException && (e.status() == 401 || e.status() == 403)) throw e
                 } finally {
                     state.processed++
@@ -198,7 +199,7 @@ class TrainerRoadZwoExportService(
     private data class ManifestFile(val runId: String, val updatedAt: String, val workouts: List<ManifestEntry>)
     private data class ManifestEntry(val trainerRoadId: String, val name: String, val category: String, val workoutLevel: Double?, val durationMinutes: Int, val status: String, val outputFile: String?, val timestamp: String, val warnings: List<String>)
 
-    private class ScanState(val id: String, val delaySeconds: Long) {
+    private inner class ScanState(val id: String, val delaySeconds: Long) {
         @Volatile var status = "queued"; @Volatile var requestCount = 0; @Volatile var completedRequests = 0; @Volatile var totalWorkouts = 0; @Volatile var workouts: List<ExportWorkoutSummary> = emptyList(); @Volatile var catalog: List<TRWorkoutProfileZoneDTO> = emptyList(); @Volatile var errorCode: String? = null; @Volatile var cancelled = false
         fun finish(value: String) { status = value }
         fun summary() = ExportScanSummary(id, status, requestCount, completedRequests, totalWorkouts, catalog.map { zone -> ExportCategory(zone.id.toString(), zone.name ?: "Uncategorized", workouts.count { it.categoryId == zone.id.toString() }, zone.name?.let { converter.categoryCode(it) } ?: "OTHER") }, workouts, errorCode)

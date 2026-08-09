@@ -16,12 +16,12 @@
       <mat-form-field appearance="outline"><mat-label>Maximum Workout Level</mat-label><input matInput type="number" step="0.1" [(ngModel)]="maxWorkoutLevel"></mat-form-field>
     </div>
     <p>Matching workouts: {{ matchingWorkouts().length }} <button mat-button (click)="selectAllMatching()">Select all matching</button></p>
-    <div class="workouts"><mat-checkbox *ngFor="let workout of matchingWorkouts()" [checked]="selectedWorkouts.has(workout.id)" (change)="toggleWorkout(workout.id, $event.checked)">{{ workout.name }} — {{ workout.category }} — {{ workout.durationMinutes }}m — WL {{ workout.workoutLevel ?? 'NA' }}</mat-checkbox></div>
+    <div class="workouts"><mat-checkbox *ngFor="let workout of matchingWorkouts()" [checked]="selectedWorkouts.has(workout.id)" (change)="toggleWorkout(workout.id, $event.checked)">{{ workout.name }} &mdash; {{ workout.category }} &mdash; {{ workout.durationMinutes }}m &mdash; WL {{ workout.workoutLevel ?? 'NA' }}</mat-checkbox></div>
     <button mat-flat-button color="primary" (click)="startExport()" [disabled]="busy || selectedWorkouts.size === 0">Start Export ({{ selectedWorkouts.size }})</button>
   </ng-container>
 
   <ng-container *ngIf="job">
-    <p>{{ job.processed }} / {{ job.total }} — exported {{ job.exported }}, skipped {{ job.skipped }}, failed {{ job.failed }}, unsupported {{ job.unsupported }}</p>
+    <p>{{ job.processed }} / {{ job.total }} &mdash; exported {{ job.exported }}, skipped {{ job.skipped }}, failed {{ job.failed }}, unsupported {{ job.unsupported }}</p>
     <p *ngIf="job.currentWorkout">Current: {{ job.currentWorkout }}</p>
     <button mat-button *ngIf="busy" (click)="cancelExport()">Cancel</button>
     <button mat-flat-button color="primary" *ngIf="job.downloadReady" (click)="download()">Download ZIP</button>

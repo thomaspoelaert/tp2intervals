@@ -1,6 +1,5 @@
 package org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Component
 import java.io.StringWriter
 import java.util.Locale
@@ -46,10 +45,10 @@ class TrainerRoadZwoConverter {
         xml.writeEmptyElement("tags")
         xml.writeStartElement("workout")
         for (interval in normalized) {
-            val low = interval.startTarget / 100.0
-            val high = interval.endTarget / 100.0
+            val low = interval.targetStart() / 100.0
+            val high = interval.targetEnd() / 100.0
             val duration = (interval.end - interval.start).toLong()
-            if (interval.testInterval && interval.startTarget <= 0.0 && interval.endTarget <= 0.0) {
+            if (interval.testInterval && low <= 0.0 && high <= 0.0) {
                 xml.writeEmptyElement("FreeRide")
                 xml.writeAttribute("Duration", duration.toString())
                 warnings += "Test interval exported as FreeRide"

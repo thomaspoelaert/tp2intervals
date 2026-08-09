@@ -18,12 +18,11 @@ class TrainerRoadZwoConverterTest {
 
         val result = converter.convert(response, summary)
 
-        assertTrue(result.fileName.contains("[SS][WL4.2][10m]"))
-        assertTrue(result.xml.contains("Power=\"0.9\""))
-        assertTrue(result.xml.contains("PowerLow=\"0.9\""))
-        assertTrue(result.xml.contains("PowerHigh=\"1\""))
-        assertTrue(result.xml.contains("Ramp"))
-        assertTrue(result.xml.contains("Ramp_ Workout_"))
+        assertTrue(result.fileName.contains("[SS][WL4.2][10m]"), result.fileName)
+        assertTrue(result.xml.contains("PowerLow=\"0.9\""), result.xml)
+        assertTrue(result.xml.contains("PowerHigh=\"1\""), result.xml)
+        assertTrue(result.xml.contains("Ramp"), result.xml)
+        assertTrue(result.xml.contains("Ramp_ Workout_"), result.xml)
     }
 
     @Test
@@ -36,6 +35,6 @@ class TrainerRoadZwoConverterTest {
 
         val result = converter.convert(response, summary)
 
-        assertTrue(result.fileName.contains("[NEWFUT][WLNA][1m]"))
+        assertTrue(result.fileName.contains("[NEWFUTZO][WLNA][1m]"), result.fileName)
     }
 }

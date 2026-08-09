@@ -14,7 +14,7 @@ export class EnvironmentService {
 
   getAddress() {
     if (window.electron) {
-      return `http://localhost:${this.electronPort}`
+      return `http://127.0.0.1:${this.electronPort}`
     } else {
       return ''
     }

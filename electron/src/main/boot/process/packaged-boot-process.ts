@@ -10,7 +10,7 @@ export class PackagedBootProcess extends ActuatorProcess {
   private readonly jdkPath = path.join(process.resourcesPath, 'jdk', 'bin', isWindows ? 'java.exe' : 'java');
   private readonly bootDbPath = path.join(app.getPath('userData'), 'tp2intervals.sqlite');
   private readonly port = 44864;
-  private readonly address = `http://localhost:${this.port}`;
+  private readonly address = `http://127.0.0.1:${this.port}`;
 
   private childProcess?: ChildProcessWithoutNullStreams = undefined;
 
